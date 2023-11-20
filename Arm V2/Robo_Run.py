@@ -24,13 +24,13 @@ for i in range(servoList[-1][0]+1):
     print("Servo " + str(i) + " Success")
 
 
-##### Write Code to Control Arm Below #####
-while(1):
-    print(servo[0].readAngle())
-    print(servo[1].readAngle())
-    print(servo[2].readAngle())
-    print(servo[3].readAngle())
-    print(servo[4].readAngle())
+# ##### Write Code to Control Arm Below #####
+# while(1):
+print(servo[0].readAngle())
+print(servo[1].readAngle())
+print(servo[2].readAngle())
+print(servo[3].readAngle())
+print(servo[4].readAngle())
 # servo[1].writeAngle(90)
 # print(servo[1].readAngle())
 

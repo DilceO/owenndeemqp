@@ -47,7 +47,7 @@ class Servo():
     def __init__(self, j_num, min_rom, max_rom):
         self.min_rom = min_rom
         self.max_rom = max_rom
-        self.j_num = j_num + 10
+        self.j_num = j_num + 11
 
         # Enable Dynamixel Torque
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
@@ -66,10 +66,9 @@ class Servo():
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
-            
-        print(dxl_present_position)
-
         self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360
+
+        return self.angle
 
     def writeAngle(self,angle_deg):
         if angle_deg > self.max_rom:
@@ -120,6 +119,8 @@ def end(j_max):
 
 def openGripper(self): # Opens the gripper
     self.writeAngle(180)
+    print("Closing Gripper")
 
 def closeGripper(self): # Closes the gripper
     self.writeAngle(0)
+    print("Openning Gripper")
