@@ -49,14 +49,14 @@ class Servo():
         self.max_rom = max_rom
         self.j_num = j_num + 11
 
-        # Enable Dynamixel Torque
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
-        else:
-            print("Dynamixel " + str(j_num) + " has been successfully connected")
+        # # Enable Dynamixel Torque
+        # dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+        # if dxl_comm_result != COMM_SUCCESS:
+        #     print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+        # elif dxl_error != 0:
+        #     print("%s" % packetHandler.getRxPacketError(dxl_error))
+        # else:
+        #     print("Dynamixel " + str(j_num) + " has been successfully connected")
 
     def readAngle(self):
         # Read present position
@@ -118,9 +118,9 @@ def end(j_max):
     portHandler.closePort()        
 
 def openGripper(self): # Opens the gripper
-    self.writeAngle(180)
+    self.writeAngle(100)
     print("Closing Gripper")
 
 def closeGripper(self): # Closes the gripper
-    self.writeAngle(0)
+    self.writeAngle(170)
     print("Openning Gripper")
