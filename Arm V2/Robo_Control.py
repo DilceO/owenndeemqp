@@ -1,6 +1,8 @@
+# Owen Rouse - 11/18/2023
 # Robo Control
 
 import os
+from dynamixel_sdk import *
 
 if os.name == 'nt':
     import msvcrt
@@ -17,8 +19,6 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-
-from dynamixel_sdk import *
 
 # Servo Specs
 ADDR_TORQUE_ENABLE          = 64
@@ -37,6 +37,8 @@ PROTOCOL_VERSION            = 2.0
 # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
 DEVICENAME                  = '/dev/ttyUSB0'
 portHandler = PortHandler(DEVICENAME)
+packetHandler = PacketHandler(PROTOCOL_VERSION)
+
 
 #  My code
 
@@ -59,13 +61,15 @@ class Servo():
     def readAngle(self):
         # Read present position
         dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, self.j_num, ADDR_PRESENT_POSITION)
-        
+
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
+            
+        print(dxl_present_position)
 
-        self.angle = dxl_present_position
+        self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360
 
     def writeAngle(self,angle_deg):
         if angle_deg > self.max_rom:
@@ -104,7 +108,7 @@ def start():
 
 def end(j_max):
     # Disable Dynamixel Torque
-    for i in rang(j_max):
+    for i in range(j_max):
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
@@ -113,3 +117,9 @@ def end(j_max):
 
     # Close port
     portHandler.closePort()        
+
+def openGripper(self): # Opens the gripper
+    self.writeAngle(180)
+
+def closeGripper(self): # Closes the gripper
+    self.writeAngle(0)
