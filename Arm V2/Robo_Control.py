@@ -49,14 +49,14 @@ class Servo():
         self.max_rom = max_rom
         self.j_num = j_num + 11
 
-        # # Enable Dynamixel Torque
-        # dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
-        # if dxl_comm_result != COMM_SUCCESS:
-        #     print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        # elif dxl_error != 0:
-        #     print("%s" % packetHandler.getRxPacketError(dxl_error))
-        # else:
-        #     print("Dynamixel " + str(j_num) + " has been successfully connected")
+        # Enable Dynamixel Torque
+        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % packetHandler.getRxPacketError(dxl_error))
+        else:
+            print("Dynamixel " + str(j_num) + " has been successfully connected")
 
     def readAngle(self):
         # Read present position
@@ -76,7 +76,7 @@ class Servo():
         elif angle_deg < self.min_rom:
             angle_deg = self.min_rom
 
-        angle = angle_deg * (DXL_MAXIMUM_POSITION_VALUE - DXL_MINIMUM_POSITION_VALUE) / 360
+        angle = int(angle_deg * (DXL_MAXIMUM_POSITION_VALUE - DXL_MINIMUM_POSITION_VALUE) / 360)
 
         # Write goal position
         dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, self.j_num, ADDR_GOAL_POSITION, angle)
