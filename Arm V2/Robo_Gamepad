@@ -42,10 +42,10 @@ class XboxController(object):
 
 
     def read(self): # return the buttons/triggers that you care about in this methode
-        theta = 0
-        phi = 0
-        rOut = 0
-        rIn = 0
+        theta = 0 # Rotation of base
+        phi = 0   # Vertical rotation
+        rOut = 0  # Arm extends
+        rIn = 0   # Arm retracts
 
         temp_theta = self.LeftJoystickX
         temp_phi = self.LeftJoystickY * -1

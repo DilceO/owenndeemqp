@@ -44,19 +44,25 @@ packetHandler = PacketHandler(PROTOCOL_VERSION)
 
 class Servo():
 
-    def __init__(self, j_num, min_rom, max_rom):
+    def __init__(self, data,EnableTorque = True):
+        j_num = data[0]
+        min_rom = data[1]
+        max_rom = data[2]
+
+        self.j_num = j_num + 11
         self.min_rom = min_rom
         self.max_rom = max_rom
-        self.j_num = j_num + 11
 
         # Enable Dynamixel Torque
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
-        else:
-            print("Dynamixel " + str(j_num) + " has been successfully connected")
+        if EnableTorque:
+            dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+            if dxl_comm_result != COMM_SUCCESS:
+                print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+            elif dxl_error != 0:
+                print("%s" % packetHandler.getRxPacketError(dxl_error))
+            else:
+                print("Dynamixel " + str(j_num) + " has been successfully connected")
+        else: print("Torque Not Enabled")
 
     def readAngle(self):
         # Read present position
@@ -66,11 +72,12 @@ class Servo():
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
-        self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360
+        self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360 - 90
 
         return self.angle
 
-    def writeAngle(self,angle_deg):
+    def writeAngle(self,angle_deg): # Write angle from 0
+        angle_deg += 90
         if angle_deg > self.max_rom:
             angle_deg = self.max_rom
         elif angle_deg < self.min_rom:
