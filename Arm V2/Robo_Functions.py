@@ -1,5 +1,6 @@
 import numpy as np
 from Robo_Control import *
+from math import *
 
 def interpolateJoint(servo, end, steps): # Needs servo[x], final degree, and time
     # Need to reformat this in the future. This is a little janky
@@ -8,15 +9,17 @@ def interpolateJoint(servo, end, steps): # Needs servo[x], final degree, and tim
     print(vector)
     return vector
 
+
+
 def lab2_5(a1, a2, a3):
     l1 = 95    # Given link lengths
     l2 = 100
     l3 = 100
   
     # DH table values
-    dh_table = [a1,             l1, 0,      -np.pi/2,
-               -np.pi/2 + a2,   0,  l2,     0,
-                np.pi/2 + a3,   0,  l3,     0]
+    dh_table = [a1,         l1, 0,      -pi/2,
+               -pi/2 + a2,   0,  l2,     0,
+                pi/2 + a3,   0,  l3,     0]
     
     
     dh2fk(dh_table)
@@ -28,10 +31,10 @@ def dh2mat(dhparams):
     a = dhparams(3)
     alpha = dhparams(4)
     # DH transformation
-    transform = np.array([[np.cos(theta), -np.sin(theta)*np.cos(alpha), np.sin(theta)*np.sin(alpha), a*np.cos(theta)],
-                    [np.sin(theta), np.cos(theta)*np.cos(alpha), -np.cos(theta)*np.sin(alpha), a*np.sin(theta)],
-                    [0, np.sin(alpha), np.cos(alpha), d],
-                    [0, 0, 0, 1]])
+    transform = np.array([[cos(theta),  -sin(theta)*cos(alpha), sin(theta)*sin(alpha),  a*cos(theta)],
+                        [sin(theta),    cos(theta)*cos(alpha),  -cos(theta)*sin(alpha), a*sin(theta)],
+                        [0,             sin(alpha),             cos(alpha),             d],
+                        [0,             0,                      0,                      1]])
     return transform
 
 

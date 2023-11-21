@@ -1,6 +1,13 @@
 from inputs import get_gamepad
 import math
 import threading
+import time
+
+
+JOY_LEFTX_DEADZONE = 0.1
+JOY_LEFTY_DEADZONE = 0.1
+TRIG_LEFT_DEADZONE = 0.01
+TRIG_RIGHT_DEADZONE = 0.01
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -35,10 +42,21 @@ class XboxController(object):
 
 
     def read(self): # return the buttons/triggers that you care about in this methode
-        theta = self.LeftJoystickX
-        phi = self.LeftJoystickY
-        rOut = self.RightTrigger
-        rIn = self.LeftTrigger
+        theta = 0
+        phi = 0
+        rOut = 0
+        rIn = 0
+
+        temp_theta = self.LeftJoystickX
+        temp_phi = self.LeftJoystickY * -1
+        temp_rOut = self.RightTrigger
+        temp_rIn = self.LeftTrigger
+
+
+        if abs(temp_theta) > JOY_LEFTX_DEADZONE : theta = temp_theta
+        if abs(temp_phi) > JOY_LEFTY_DEADZONE   : phi = temp_phi
+        if abs(temp_rOut) > TRIG_LEFT_DEADZONE  : rOut = temp_rOut
+        if abs(temp_rIn) > TRIG_RIGHT_DEADZONE  : rIn = temp_rIn
         return [theta, phi, rOut, rIn]
 
 
@@ -93,4 +111,5 @@ class XboxController(object):
 if __name__ == '__main__':
     joy = XboxController()
     while True:
+        time.sleep(0.1)
         print(joy.read())
