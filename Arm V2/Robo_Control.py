@@ -124,10 +124,3 @@ def end(j_max):
     # Close port
     portHandler.closePort()        
 
-def openGripper(self): # Opens the gripper
-    self.writeAngle(100)
-    print("Closing Gripper")
-
-def closeGripper(self): # Closes the gripper
-    self.writeAngle(170)
-    print("Openning Gripper")
