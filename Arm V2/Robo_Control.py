@@ -77,10 +77,13 @@ class Servo():
         return self.angle
 
     def writeAngle(self,angle_deg): # Write angle from 0
+        print("Servo " + str(self.j_num) + " at " + str(angle_deg))
         angle_deg += 90
         if angle_deg > self.max_rom:
+            print("Servo " + str(self.j_num) + " Exceeded Max Angle")
             angle_deg = self.max_rom
         elif angle_deg < self.min_rom:
+            print("Servo " + str(self.j_num) + " Exceeded Min Angle")
             angle_deg = self.min_rom
 
         angle = int(angle_deg * (DXL_MAXIMUM_POSITION_VALUE - DXL_MINIMUM_POSITION_VALUE) / 360)
@@ -113,8 +116,11 @@ def start():
         quit()
 
 def end(j_max):
+    j_max = j_max+10
     # Disable Dynamixel Torque
-    for i in range(j_max):
+    print("Grab Robot Arm to keep from Crashing! Press Key to continue...")
+    getch()
+    for i in range(0,j_max+2):
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))

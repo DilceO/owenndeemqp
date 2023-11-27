@@ -30,15 +30,17 @@ rSense = 1
 gripSense = 1
 
 # Automatic Setup of Robot. After these steps, joints should no longer be able to move freely
+# print("Press any key to Init")
+# getch()
 
 start()
 servo = []
 for i in range(servoList[-1][0]+1):
     print("index: " + str(i))
-    servo.append(Servo((servoList[i][0],servoList[i][1],servoList[i][2]),EnableTorque = False))
+    servo.append(Servo((servoList[i][0],servoList[i][1],servoList[i][2]),EnableTorque = True))
     print("Servo " + str(i) + " Success")
 
-home(r, phi, theta, (servo[0], servo[1],servo[2], servo[3]))
+#home(r, phi, theta, (servo[0], servo[1],servo[2], servo[3]))
 servo[4].writeAngle(grip) # Opens gripper
 
 ##########################################
@@ -47,23 +49,43 @@ servo[4].writeAngle(grip) # Opens gripper
 
 trajSteps = 50
 
+print("Press any key to Start Controller")
+getch()
+
 # traj = interpolateJoint(servo[1],180, trajSteps)
 # for i in traj:
 #     servo[1].writeAngle(i)
-while(1):
-    print("Cycle")
-    theta, phi, rOut, rIn, gripperClose, gripperOpen = joy.read()
-    if theta or phi or rOut or rIn or gripperClose or gripperOpen:  # don't run following lines if there isn't a need
+servo[0].writeAngle(90)
+print("press key for next servo")
+getch()
+servo[1].writeAngle(90)
+print("press key for next servo")
+getch()
+servo[2].writeAngle(90)
+print("press key for next servo")
+getch()
+servo[3].writeAngle(90)
 
-        # adjust params based on controller input, then multiply by sensitivity think
-        theta += input[0] * thetaSense
-        phi += input[1] * phiSense
-        r += (input[2] - input[3]) * rSense
-        grip += (gripperClose - gripperOpen) * gripSense
+# while(1):
+#     time.sleep(0.2)
+#     print("\n\n")
+#     print("Servo 0 angle: " + str(servo[0].readAngle()))
+#     print("Servo 1 angle: " + str(servo[1].readAngle()))
+#     print("Servo 2 angle: " + str(servo[2].readAngle()))
+#     print("Servo 3 angle: " + str(servo[3].readAngle()))
+    
+    # theta, phi, rOut, rIn, gripperClose, gripperOpen = joy.read()
+    # if theta or phi or rOut or rIn or gripperClose or gripperOpen:  # don't run following lines if there isn't a need
 
-        theta, phi, r, grip = protection(theta, phi, r, grip) # Basic input protection to prevent hyper-extension
+    #     # adjust params based on controller input, then multiply by sensitivity think
+    #     theta += input[0] * thetaSense
+    #     phi += input[1] * phiSense
+    #     r += (input[2] - input[3]) * rSense
+    #     grip += (gripperClose - gripperOpen) * gripSense
 
-        ikAndWrite(theta, phi, r, grip) # No interpolation. Designed to be used ONLY in conjunction with controller
+    #     theta, phi, r, grip = protection(theta, phi, r, grip) # Basic input protection to prevent hyper-extension
+
+    #     ikAndWrite(theta, phi, r, grip) # No interpolation. Designed to be used ONLY in conjunction with controller
         
         
 ###########################################

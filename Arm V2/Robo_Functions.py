@@ -11,7 +11,7 @@ def deg2rad(val):
 def interpolateJoint(servo, end, steps = 50): # Needs servo[x], final degree, and "time"
     # Need to reformat this in the future. This is a little janky
     start = servo.readAngle()
-    vector = round(np.linspace(start,end,steps))
+    vector = np.round(np.linspace(start,end,steps))
     print(vector)
     return vector
 
@@ -46,12 +46,12 @@ def dh2mat(dhparams):   # Probably wont be used
 
 def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
     ## R Calculations
-    theta0 = theta
+    theta0 = deg2rad(theta)
 
-    la = 100
-    lb = 10
+    la = 130 # 
+    lb = 25  # 
     l1 = np.sqrt(la**2 + lb**2)
-    l2 = 100
+    l2 = 125 # mm
     theta2P = np.arccos((r**2 - l1**2 - l2**2)/(-2*l1*l2))
     thetaA = np.arctan(lb/la)
     theta2 = np.pi-theta2P + thetaA
@@ -66,15 +66,22 @@ def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
     # print(solution)
 
     # This was found using MATLAB from equations above
-    theta1 = np.real(-np.log((- 1 + 1j)/(200*np.exp(theta2*1j) + 20*(101**(1/2))*np.exp(7181883299515469*1j/72057594037927936)))*1j)
+    #theta1 = -np.log((la*((la**2 + lb**2)/la**2)**(1/2)*1j)/(la*(la**2 + lb**2)**(1/2)*(1 - 1j) + lb*(la**2 + lb**2)**(1/2)*(1 + 1j) + l2*la*np.exp(theta1*1j)*((la**2 + lb**2)/la**2)**(1/2)*(1 - 1j)))*1j
+    theta1 = np.real(-np.log((la*np.exp(phi*1j)*((la**2 + lb**2)/la**2)**(1/2))/(4*(la*(la**2 + lb**2)**(1/2) + lb*(la**2 + lb**2)**(1/2)*1j + l2*la*np.exp(theta2*1j)*((la**2 + lb**2)/la**2)**(1/2))))*1j)
+    theta3 = (np.pi - theta2P - (deg2rad(phi)-theta1 + thetaA))
 
-    theta3 = np.pi/2-(np.pi - theta2P - (deg2rad(phi)-theta1 + thetaA))
+    theta0 = abs(theta0)
+    theta1 = abs(theta1)
+    theta2 = abs(theta2)
+    theta3 = abs(theta3)
 
     print("theta0: " + str(theta0))
     print("theta1: " + str(rad2deg(theta1)))
     print("theta2: " + str(rad2deg(theta2)))
     print("theta3: " + str(rad2deg(theta3)))
     return theta0, theta1, theta2, theta3
+
+print(ik(100, 25, 45))
 
 # Functions
 def home(r,phi,theta,servos):
