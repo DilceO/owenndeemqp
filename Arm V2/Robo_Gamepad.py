@@ -47,18 +47,19 @@ class XboxController(object):
         rOut = 0  # Arm extends
         rIn = 0   # Arm retracts
 
-        temp_theta = self.LeftJoystickX
-        temp_phi = self.LeftJoystickY * -1
+        temp_theta = self.LeftJoystickX * -1
+        temp_phi = self.LeftJoystickY
         temp_rOut = self.RightTrigger/4
         temp_rIn = self.LeftTrigger/4
         gripperOpen = self.RightBumper
         gripperClose = self.LeftBumper
+        A = self.A
 
         if abs(temp_theta) > JOY_LEFTX_DEADZONE : theta = temp_theta
         if abs(temp_phi) > JOY_LEFTY_DEADZONE   : phi = temp_phi
         if abs(temp_rOut) > TRIG_LEFT_DEADZONE  : rOut = temp_rOut
         if abs(temp_rIn) > TRIG_RIGHT_DEADZONE  : rIn = temp_rIn
-        return theta, phi, rOut, rIn, gripperClose, gripperOpen
+        return theta, phi, rOut, rIn, gripperClose, gripperOpen, A
 
 
     def _monitor_controller(self):

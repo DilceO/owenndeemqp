@@ -4,7 +4,7 @@
 import numpy as np
 from Robo_Control import *
 from Robo_Functions import *
-from Robo_Gamepad import *
+import Robo_Gamepad as gp
 
 # Here are the variables needed to set up the arm:
 # Servo 1 is the base, servo 2 is the next one, servo 3 ...
@@ -24,14 +24,14 @@ grip = 0    # 0 is open,140 is closed
 
 # Sensetivity Values for contoller. 1 is natural. 2 is higher sensitivity
 
-thetaSense = 1
-phiSense = 1
-rSense = 1
-gripSense = 1
+thetaSense = 2
+phiSense = 2
+rSense = 2
+gripSense = 2
 
 # Automatic Setup of Robot. After these steps, joints should no longer be able to move freely
-# print("Press any key to Init")
-# getch()
+print("Press any key to Init")
+getch()
 
 start()
 servo = []
@@ -40,8 +40,10 @@ for i in range(servoList[-1][0]+1):
     servo.append(Servo((servoList[i][0],servoList[i][1],servoList[i][2]),EnableTorque = True))
     print("Servo " + str(i) + " Success")
 
-#home(r, phi, theta, (servo[0], servo[1],servo[2], servo[3]))
+home(r, phi, theta, (servo[0], servo[1],servo[2], servo[3]))
 servo[4].writeAngle(grip) # Opens gripper
+
+joy = gp.XboxController()
 
 ##########################################
 #### Write Code to Control Arm Below #####
@@ -51,41 +53,22 @@ trajSteps = 50
 
 print("Press any key to Start Controller")
 getch()
+print("Running! Press A on controller to quit")
 
-# traj = interpolateJoint(servo[1],180, trajSteps)
-# for i in traj:
-#     servo[1].writeAngle(i)
-servo[0].writeAngle(90)
-print("press key for next servo")
-getch()
-servo[1].writeAngle(90)
-print("press key for next servo")
-getch()
-servo[2].writeAngle(90)
-print("press key for next servo")
-getch()
-servo[3].writeAngle(90)
-
-# while(1):
-#     time.sleep(0.2)
-#     print("\n\n")
-#     print("Servo 0 angle: " + str(servo[0].readAngle()))
-#     print("Servo 1 angle: " + str(servo[1].readAngle()))
-#     print("Servo 2 angle: " + str(servo[2].readAngle()))
-#     print("Servo 3 angle: " + str(servo[3].readAngle()))
+while(1):
     
-    # theta, phi, rOut, rIn, gripperClose, gripperOpen = joy.read()
-    # if theta or phi or rOut or rIn or gripperClose or gripperOpen:  # don't run following lines if there isn't a need
+    theta_delta, phi_delta, rOut_delta, rIn_delta, gripperClose_delta, gripperOpen_delta, A = joy.read()
+    if A: break
+    if theta_delta or phi_delta or rOut_delta or rIn_delta or gripperClose_delta or gripperOpen_delta:  # don't run following lines if there isn't a need
 
-    #     # adjust params based on controller input, then multiply by sensitivity think
-    #     theta += input[0] * thetaSense
-    #     phi += input[1] * phiSense
-    #     r += (input[2] - input[3]) * rSense
-    #     grip += (gripperClose - gripperOpen) * gripSense
+        # adjust params based on controller input, then multiply by sensitivity think
+        theta += theta_delta * thetaSense
+        phi += phi_delta * phiSense
+        r += (rOut_delta - rIn_delta) * rSense
+        grip += (gripperClose_delta - gripperOpen_delta) * gripSense
 
-    #     theta, phi, r, grip = protection(theta, phi, r, grip) # Basic input protection to prevent hyper-extension
-
-    #     ikAndWrite(theta, phi, r, grip) # No interpolation. Designed to be used ONLY in conjunction with controller
+        ikAndWrite(r, phi, theta, grip, servo) # No interpolation. Designed to be used ONLY in conjunction with controller
+    
         
         
 ###########################################

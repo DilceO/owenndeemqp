@@ -8,6 +8,29 @@ def rad2deg(val):
 def deg2rad(val):
     return val/180*np.pi
 
+
+def protectionJoints(theta, phi, r): # Basic input protections to hopefully avoid breaking something
+    if theta > 180: 
+        theta = 180-3
+        print("protection used")
+    if theta < 0: 
+        theta = 0+3
+        print("protection used")
+    if phi > 180: 
+        phi = 180-3 
+        print("protection used")
+    if phi < 0: 
+        phi = 0+3
+        print("protection used")
+    if r > 180: 
+        r = 180-3
+        print("protection used")
+    if r < 20: 
+        r = 20+3
+        print("protection used")
+
+    return theta, phi, r
+
 def interpolateJoint(servo, end, steps = 50): # Needs servo[x], final degree, and "time"
     # Need to reformat this in the future. This is a little janky
     start = servo.readAngle()
@@ -45,43 +68,35 @@ def dh2mat(dhparams):   # Probably wont be used
             #print(retMat)
 
 def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
-    ## R Calculations
+    theta, phi, r = protectionJoints(theta, phi, r)
+    ## r Calculations
     theta0 = deg2rad(theta)
+    phi = deg2rad(phi)
 
-    la = 130 # 
-    lb = 25  # 
+    la = 130 # mm
+    lb = 25  # mm
     l1 = np.sqrt(la**2 + lb**2)
     l2 = 125 # mm
     theta2P = np.arccos((r**2 - l1**2 - l2**2)/(-2*l1*l2))
     thetaA = np.arctan(lb/la)
     theta2 = np.pi-theta2P + thetaA
+    theta2 = np.real(theta2)
+    
+    # Elbow Down(?)
+    # theta1_0 = -np.log(-(2*r*np.exp(phi*1j)*(la**2 + lb**2)**(1/2))/(r**2 - l2**2 + la**2 + lb**2 + l2*(la**2 + lb**2)**(1/2)*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
+    # print(np.real(theta1_0))
 
-    # Phi Calculations
-    #theta1, x, y = sym.symbols('theta1, x, y')
-    # eq1 = sym.Eq(l2 * sym.cos(theta1 + theta2) + l1 * sym.cos(theta1 + thetaA), x)
-    # eq2 = sym.Eq(l1 * sym.sin(theta1 + thetaA) + l2 * sym.sin(theta1 + theta2), y)
-    # eq3 = sym.Eq(sym.tan(y/x), phi)
-    # eq = sym.Eq(sym.atan2(l1 * sym.sin(theta1 + thetaA) + l2 * sym.sin(theta1 + theta2), l2 * sym.cos(theta1 + theta2) + l1 * sym.cos(theta1 + thetaA)), phi)
-    # solution = sym.solve(eq, theta1)
-    # print(solution)
+    # Elbow Up(?)
+    theta1_1 = -np.log((2*r*np.exp(phi*1j)*(la**2 + lb**2)**(1/2))/(r**2 - l2**2 + la**2 + lb**2 + l2*(la**2 + lb**2)**(1/2)*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
+    # print(np.real(theta1_1))
+    theta1 = np.real(theta1_1)
 
-    # This was found using MATLAB from equations above
-    #theta1 = -np.log((la*((la**2 + lb**2)/la**2)**(1/2)*1j)/(la*(la**2 + lb**2)**(1/2)*(1 - 1j) + lb*(la**2 + lb**2)**(1/2)*(1 + 1j) + l2*la*np.exp(theta1*1j)*((la**2 + lb**2)/la**2)**(1/2)*(1 - 1j)))*1j
-    theta1 = np.real(-np.log((la*np.exp(phi*1j)*((la**2 + lb**2)/la**2)**(1/2))/(4*(la*(la**2 + lb**2)**(1/2) + lb*(la**2 + lb**2)**(1/2)*1j + l2*la*np.exp(theta2*1j)*((la**2 + lb**2)/la**2)**(1/2))))*1j)
-    theta3 = (np.pi - theta2P - (deg2rad(phi)-theta1 + thetaA))
+    theta3 = np.pi - (np.pi/2 - (np.pi - (phi - theta1) - (theta2 + thetaA)))
+    theta3 = np.real(theta3)
 
-    theta0 = abs(theta0)
-    theta1 = abs(theta1)
-    theta2 = abs(theta2)
-    theta3 = abs(theta3)
+    return rad2deg(theta0), rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
-    print("theta0: " + str(theta0))
-    print("theta1: " + str(rad2deg(theta1)))
-    print("theta2: " + str(rad2deg(theta2)))
-    print("theta3: " + str(rad2deg(theta3)))
-    return theta0, theta1, theta2, theta3
-
-print(ik(100, 25, 45))
+print(ik(100, 135, 90))
 
 # Functions
 def home(r,phi,theta,servos):
@@ -105,21 +120,7 @@ def ikAndWrite(r, phi, theta, grip, servos):
     servos[4].writeAngle(grip)
 
 def openGripper(self): # Opens the gripper
-    self.writeAngle(0)
-    print("Closing Gripper")
+    self.writeAngle(10)
 
 def closeGripper(self): # Closes the gripper
-    self.writeAngle(140)
-    print("Openning Gripper")
-
-def protection(theta, phi, r, grip): # Basic input protections to hopefully avoid breaking something
-    if theta > 180: theta = 180
-    if theta < 0: theta = 0
-    if phi > 180: phi = 180
-    if phi < 0: phi = 0
-    if r > 180: r = 180
-    if r < 20: r = 20
-    if grip > 140: grip = 140
-    if grip < 0: grip = 0
-
-    return theta, phi, r, grip
+    self.writeAngle(130)

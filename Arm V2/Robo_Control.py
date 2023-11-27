@@ -77,7 +77,7 @@ class Servo():
         return self.angle
 
     def writeAngle(self,angle_deg): # Write angle from 0
-        print("Servo " + str(self.j_num) + " at " + str(angle_deg))
+        #print("Servo " + str(self.j_num) + " at " + str(angle_deg))
         angle_deg += 90
         if angle_deg > self.max_rom:
             print("Servo " + str(self.j_num) + " Exceeded Max Angle")
