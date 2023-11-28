@@ -80,10 +80,10 @@ class Servo():
         #print("Servo " + str(self.j_num) + " at " + str(angle_deg))
         angle_deg += 90
         if angle_deg > self.max_rom:
-            print("Servo " + str(self.j_num) + " Exceeded Max Angle")
+            print("Servo " + str(self.j_num) + " Exceeded Max Angle at: " + str(angle_deg))
             angle_deg = self.max_rom
         elif angle_deg < self.min_rom:
-            print("Servo " + str(self.j_num) + " Exceeded Min Angle")
+            print("Servo " + str(self.j_num) + " Exceeded Min Angle at: " + str(angle_deg))
             angle_deg = self.min_rom
 
         angle = int(angle_deg * (DXL_MAXIMUM_POSITION_VALUE - DXL_MINIMUM_POSITION_VALUE) / 360)

@@ -24,10 +24,10 @@ grip = 0    # 0 is open,140 is closed
 
 # Sensetivity Values for contoller. 1 is natural. 2 is higher sensitivity
 
-thetaSense = 2
-phiSense = 2
-rSense = 2
-gripSense = 2
+thetaSense = 5
+phiSense = 5
+rSense = 5
+gripSense = 5
 
 # Automatic Setup of Robot. After these steps, joints should no longer be able to move freely
 print("Press any key to Init")
@@ -45,7 +45,7 @@ servo[4].writeAngle(grip) # Opens gripper
 
 joy = gp.XboxController()
 
-##########################################
+########################################## 
 #### Write Code to Control Arm Below #####
 ##########################################
 
@@ -54,7 +54,7 @@ trajSteps = 50
 print("Press any key to Start Controller")
 getch()
 print("Running! Press A on controller to quit")
-
+# try:
 while(1):
     
     theta_delta, phi_delta, rOut_delta, rIn_delta, gripperClose_delta, gripperOpen_delta, A = joy.read()
@@ -65,9 +65,14 @@ while(1):
         theta += theta_delta * thetaSense
         phi += phi_delta * phiSense
         r += (rOut_delta - rIn_delta) * rSense
-        grip += (gripperClose_delta - gripperOpen_delta) * gripSense
+        grip += (gripperOpen_delta - gripperClose_delta) * gripSense
 
+        theta, phi, r, grip = protectionJoints(theta, phi, r, grip)
         ikAndWrite(r, phi, theta, grip, servo) # No interpolation. Designed to be used ONLY in conjunction with controller
+
+# except:
+#     print("Error has Occured. Terminating Robo Arm...")
+#     end(servoList[-1][0])
         
 ###########################################
 ##### Write Code to Control Arm Above #####

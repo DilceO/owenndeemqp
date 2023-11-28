@@ -9,33 +9,38 @@ def deg2rad(val):
     return val/180*np.pi
 
 
-def protectionJoints(theta, phi, r): # Basic input protections to hopefully avoid breaking something
+def protectionJoints(theta, phi, r, grip): # Basic input protections to hopefully avoid breaking something
     if theta > 180: 
-        theta = 180-3
-        print("protection used")
+        theta = 180
+        print("Protection used at theta = " + str(theta))
     if theta < 0: 
-        theta = 0+3
-        print("protection used")
+        theta = 0
+        print("Protection used at theta = " + str(theta))
     if phi > 180: 
-        phi = 180-3 
-        print("protection used")
+        phi = 180
+        print("Protection used at phi = " + str(phi))
     if phi < 0: 
-        phi = 0+3
-        print("protection used")
-    if r > 180: 
-        r = 180-3
-        print("protection used")
+        phi = 0
+        print("Protection used at phi = " + str(phi))
+    if r > 250: 
+        r = 250
+        print("Protection used at r = " + str(r))
     if r < 20: 
-        r = 20+3
-        print("protection used")
+        r = 20
+        print("Protection used at r = " + str(r))
+    if grip > 140:
+        grip = 140
+        print("Protection used at grip = " + str(grip))
+    if grip < 0:
+        grip = 0
+        print("Protection used at grip = " + str(grip))
+    
+    return theta, phi, r, grip
 
-    return theta, phi, r
-
-def interpolateJoint(servo, end, steps = 50): # Needs servo[x], final degree, and "time"
+def interpolateJoint(servo, end, steps = 30): # Needs servo[x], final degree, and "time"
     # Need to reformat this in the future. This is a little janky
     start = servo.readAngle()
     vector = np.round(np.linspace(start,end,steps))
-    print(vector)
     return vector
 
 def DHParams(a1, a2):   # Probably wont be used
@@ -65,10 +70,8 @@ def dh2mat(dhparams):   # Probably wont be used
                         [0,             sym.sin(alpha),             sym.cos(alpha),             d],
                         [0,             0,                      0,                      1]])
     return transform
-            #print(retMat)
 
 def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
-    theta, phi, r = protectionJoints(theta, phi, r)
     ## r Calculations
     theta0 = deg2rad(theta)
     phi = deg2rad(phi)
@@ -120,7 +123,7 @@ def ikAndWrite(r, phi, theta, grip, servos):
     servos[4].writeAngle(grip)
 
 def openGripper(self): # Opens the gripper
-    self.writeAngle(10)
+    self.writeAngle(20)
 
 def closeGripper(self): # Closes the gripper
     self.writeAngle(130)
