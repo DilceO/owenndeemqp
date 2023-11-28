@@ -91,12 +91,12 @@ def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
     # print(np.real(theta1_1))
     theta1 = np.real(theta1_1)
 
-    theta3 = np.pi - (np.pi/2 - (np.pi - (phi - theta1) - (theta2 + thetaA)))
+    theta3 = np.pi/2 - (np.pi - (phi - theta1) - ((np.pi - theta2) + thetaA))
     theta3 = np.real(theta3)
 
     return rad2deg(theta0), rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
-print(ik(100, 135, 90))
+print(ik(20, 135, 90))
 
 # Functions
 def home(r,phi,theta,servos):

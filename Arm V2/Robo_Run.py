@@ -68,8 +68,6 @@ while(1):
         grip += (gripperClose_delta - gripperOpen_delta) * gripSense
 
         ikAndWrite(r, phi, theta, grip, servo) # No interpolation. Designed to be used ONLY in conjunction with controller
-    
-        
         
 ###########################################
 ##### Write Code to Control Arm Above #####
