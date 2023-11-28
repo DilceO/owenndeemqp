@@ -2,12 +2,19 @@ import numpy as np
 from Robo_Control import *
 import sympy as sym
 
+# Linkages
+
+la = 130 # mm
+lb = 25  # mm
+l1 = np.sqrt(la**2 + lb**2)
+l2 = 125 # mm
+thetaA = np.arctan(lb/la)
+
 def rad2deg(val):
     return val*180/np.pi
 
 def deg2rad(val):
     return val/180*np.pi
-
 
 def protectionJoints(theta, phi, r, grip): # Basic input protections to hopefully avoid breaking something
     if theta > 180: 
@@ -72,26 +79,19 @@ def dh2mat(dhparams):   # Probably wont be used
     return transform
 
 def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
-    ## r Calculations
+    ## Calculations. Everything below MUST be run every time. If it doesn't need to be run every time, it better not be below
     theta0 = deg2rad(theta)
     phi = deg2rad(phi)
 
-    la = 130 # mm
-    lb = 25  # mm
-    l1 = np.sqrt(la**2 + lb**2)
-    l2 = 125 # mm
     theta2P = np.arccos((r**2 - l1**2 - l2**2)/(-2*l1*l2))
-    thetaA = np.arctan(lb/la)
     theta2 = np.pi-theta2P + thetaA
     theta2 = np.real(theta2)
     
-    # Elbow Down(?)
-    # theta1_0 = -np.log(-(2*r*np.exp(phi*1j)*(la**2 + lb**2)**(1/2))/(r**2 - l2**2 + la**2 + lb**2 + l2*(la**2 + lb**2)**(1/2)*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
-    # print(np.real(theta1_0))
+    # Elbow Down
+    # theta1_0 = -np.log(-(2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
 
-    # Elbow Up(?)
-    theta1_1 = -np.log((2*r*np.exp(phi*1j)*(la**2 + lb**2)**(1/2))/(r**2 - l2**2 + la**2 + lb**2 + l2*(la**2 + lb**2)**(1/2)*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
-    # print(np.real(theta1_1))
+    # Elbow Up
+    theta1_1 = -np.log((2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
     theta1 = np.real(theta1_1)
 
     theta3 = np.pi/2 - (np.pi - (phi - theta1) - ((np.pi - theta2) + thetaA))
