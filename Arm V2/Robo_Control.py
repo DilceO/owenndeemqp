@@ -44,19 +44,25 @@ packetHandler = PacketHandler(PROTOCOL_VERSION)
 
 class Servo():
 
-    def __init__(self, j_num, min_rom, max_rom):
+    def __init__(self, data,EnableTorque = True):
+        j_num = data[0]
+        min_rom = data[1]
+        max_rom = data[2]
+
+        self.j_num = j_num + 11
         self.min_rom = min_rom
         self.max_rom = max_rom
-        self.j_num = j_num + 11
 
         # Enable Dynamixel Torque
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-        elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
-        else:
-            print("Dynamixel " + str(j_num) + " has been successfully connected")
+        if EnableTorque:
+            dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, self.j_num, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+            if dxl_comm_result != COMM_SUCCESS:
+                print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+            elif dxl_error != 0:
+                print("%s" % packetHandler.getRxPacketError(dxl_error))
+            else:
+                print("Dynamixel " + str(j_num) + " has been successfully connected")
+        else: print("Torque Not Enabled")
 
     def readAngle(self):
         # Read present position
@@ -66,14 +72,18 @@ class Servo():
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
-        self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360
+        self.angle = dxl_present_position/DXL_MAXIMUM_POSITION_VALUE * 360 - 90
 
         return self.angle
 
-    def writeAngle(self,angle_deg):
+    def writeAngle(self,angle_deg): # Write angle from 0
+        #print("Servo " + str(self.j_num) + " at " + str(angle_deg))
+        angle_deg += 90
         if angle_deg > self.max_rom:
+            print("Servo " + str(self.j_num) + " Exceeded Max Angle at: " + str(angle_deg))
             angle_deg = self.max_rom
         elif angle_deg < self.min_rom:
+            print("Servo " + str(self.j_num) + " Exceeded Min Angle at: " + str(angle_deg))
             angle_deg = self.min_rom
 
         angle = int(angle_deg * (DXL_MAXIMUM_POSITION_VALUE - DXL_MINIMUM_POSITION_VALUE) / 360)
@@ -106,8 +116,11 @@ def start():
         quit()
 
 def end(j_max):
+    j_max = j_max+10
     # Disable Dynamixel Torque
-    for i in range(j_max):
+    print("Grab Robot Arm to keep from Crashing! Press Key to continue...")
+    getch()
+    for i in range(0,j_max+2):
         dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, i, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
@@ -117,10 +130,3 @@ def end(j_max):
     # Close port
     portHandler.closePort()        
 
-def openGripper(self): # Opens the gripper
-    self.writeAngle(100)
-    print("Closing Gripper")
-
-def closeGripper(self): # Closes the gripper
-    self.writeAngle(170)
-    print("Openning Gripper")
