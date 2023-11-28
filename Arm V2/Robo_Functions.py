@@ -16,7 +16,7 @@ def rad2deg(val):
 def deg2rad(val):
     return val/180*np.pi
 
-def protectionJoints(theta, phi, r, grip): # Basic input protections to hopefully avoid breaking something
+def protectionJoints(theta, phi, r, grip): # Basic input protections to hopefully avoid breaking something... again
     if theta > 180: 
         theta = 180
         print("Protection used at theta = " + str(theta))
@@ -48,6 +48,7 @@ def interpolateJoint(servo, end, steps = 30): # Needs servo[x], final degree, an
     # Need to reformat this in the future. This is a little janky
     start = servo.readAngle()
     vector = np.round(np.linspace(start,end,steps))
+    print(vector)
     return vector
 
 def DHParams(a1, a2):   # Probably wont be used
@@ -78,9 +79,8 @@ def dh2mat(dhparams):   # Probably wont be used
                         [0,             0,                      0,                      1]])
     return transform
 
-def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
+def ik(r,phi,theta0):    # Give in degrees from 0 to 180(ish)
     ## Calculations. Everything below MUST be run every time. If it doesn't need to be run every time, it better not be below
-    theta0 = deg2rad(theta)
     phi = deg2rad(phi)
 
     theta2P = np.arccos((r**2 - l1**2 - l2**2)/(-2*l1*l2))
@@ -97,7 +97,7 @@ def ik(r,phi,theta):    # Give in degrees from 0 to 180(ish)
     theta3 = np.pi/2 - (np.pi - (phi - theta1) - ((np.pi - theta2) + thetaA))
     theta3 = np.real(theta3)
 
-    return rad2deg(theta0), rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
+    return theta0, rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
 print(ik(20, 135, 90))
 
