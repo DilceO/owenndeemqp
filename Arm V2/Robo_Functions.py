@@ -1,4 +1,12 @@
 import numpy as np
+from Robo_Control import *
+
+def interpolateJoint(servo, end, steps): # Needs servo[x], final degree, and time
+    # Need to reformat this in the future. This is a little janky
+    start = servo.readAngle()
+    vector = np.round(np.linspace(start,end,steps))
+    print(vector)
+    return vector
 
 def lab2_5(a1, a2, a3):
     l1 = 95    # Given link lengths

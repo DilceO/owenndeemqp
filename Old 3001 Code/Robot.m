@@ -118,7 +118,7 @@ classdef Robot < handle
         end
         
         function interpolate_jp(self, xyz, time)
-          self.goal = xyz;  % Sets goal for goal functoin
+          self.goal = xyz;  % Sets goal for goal function
 
           packet = zeros(5, 1, 'single');
           packet(1) = time; %one second time
