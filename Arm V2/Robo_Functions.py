@@ -85,17 +85,16 @@ def ik(r,phi,theta0):    # Give in degrees from 0 to 180(ish)
 
     theta2P = np.arccos((r**2 - l1**2 - l2**2)/(-2*l1*l2))
     theta2 = np.pi-theta2P + thetaA
-    theta2 = np.real(theta2)
     
-    # Elbow Down
-    # theta1_0 = -np.log(-(2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
+    # Elbow Down - Don't need for calculations for this specific arm
+    # theta1_0 = -np.log(-(2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - thetaA
 
     # Elbow Up
-    theta1_1 = -np.log((2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - np.arctan(lb/la)
+    theta1_1 = -np.log((2*r*np.exp(phi*1j)*l1)/(r**2 - l2**2 + la**2 + lb**2 + l2*l1*(-(r**4 - 2*r**2*l2**2 - 2*r**2*la**2 - 2*r**2*lb**2 + l2**4 - 2*l2**2*la**2 - 2*l2**2*lb**2 + la**4 + 2*la**2*lb**2 + lb**4)/(4*l2**2*(la**2 + lb**2)))**(1/2)*2*1j))*1j - thetaA
     theta1 = np.real(theta1_1)
 
-    theta3 = np.pi/2 - (np.pi - (phi - theta1) - ((np.pi - theta2) + thetaA))
-    theta3 = np.real(theta3)
+    # theta3 = np.pi/2 - (np.pi - (phi - theta1) - ((np.pi - theta2) + thetaA))
+    theta3 = np.pi/2 + phi - theta1 - theta2 - thetaA
 
     return theta0, rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
