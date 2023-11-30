@@ -4,10 +4,10 @@ import sympy as sym
 
 # Linkages
 
-la = 130 # mm
-lb = 25  # mm
+la = 128 # mm
+lb = 24  # mm
 l1 = np.sqrt(la**2 + lb**2)
-l2 = 125 # mm
+l2 = 124 # mm
 thetaA = np.arctan(lb/la)
 
 def rad2deg(val):

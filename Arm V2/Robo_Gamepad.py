@@ -59,6 +59,7 @@ class XboxController(object):
         if abs(temp_phi) > JOY_LEFTY_DEADZONE   : phi = temp_phi
         if abs(temp_rOut) > TRIG_LEFT_DEADZONE  : rOut = temp_rOut
         if abs(temp_rIn) > TRIG_RIGHT_DEADZONE  : rIn = temp_rIn
+        
         return theta, phi, rOut, rIn, gripperClose, gripperOpen, A
 
 

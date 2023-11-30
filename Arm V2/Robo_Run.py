@@ -19,7 +19,7 @@ servoList = [[0, 90, 270], # Servo 0 (Base)
 r = 100     # mm
 phi = 135   # Degrees
 theta = 90  # Degrees
-grip = 0    # 0 is open,140 is closed
+grip = 20    # 0 is open,140 is closed
 ### These will all be normailzed to 0. This means That MOST will be from 0 - 180 ###
 
 # Sensetivity Values for contoller. 1 is natural. 2 is higher sensitivity
@@ -54,16 +54,15 @@ print("Running! Press A on controller to quit")
 try:
     while(1):
         
-        theta_delta, phi_delta, rOut_delta, rIn_delta, gripperClose_delta, gripperOpen_delta, A = joy.read()
-        if A: break
-        if theta_delta or phi_delta or rOut_delta or rIn_delta or gripperClose_delta or gripperOpen_delta:  # don't run following lines if there isn't a need
-
-            # adjust params based on controller input, then multiply by sensitivity think
+        theta_delta, phi_delta, rOut_delta, rIn_delta, gripperClose_delta, gripperOpen_delta, A_Break = joy.read()
+        if A_Break: break
+        #elif theta_delta or phi_delta or rOut_delta or rIn_delta or gripperClose_delta or gripperOpen_delta:  # don't run following lines if there isn't a need
+        # adjust params based on controller input, then multiply by sensitivity
+        else:    
             theta += theta_delta * thetaSense
             phi += phi_delta * phiSense
             r += (rOut_delta - rIn_delta) * rSense
             grip += (gripperOpen_delta - gripperClose_delta) * gripSense
-
             theta, phi, r, grip = protectionJoints(theta, phi, r, grip)
             ikAndWrite(r, phi, theta, grip, servo) # No interpolation. Designed to be used ONLY in conjunction with controller
 
