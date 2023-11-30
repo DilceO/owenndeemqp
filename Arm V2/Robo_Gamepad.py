@@ -1,8 +1,5 @@
 from inputs import get_gamepad
-import math
 import threading
-import time
-
 
 JOY_LEFTX_DEADZONE = 0.15
 JOY_LEFTY_DEADZONE = 0.1
@@ -10,8 +7,9 @@ TRIG_LEFT_DEADZONE = 0.01
 TRIG_RIGHT_DEADZONE = 0.01
 
 class XboxController(object):
-    MAX_TRIG_VAL = math.pow(2, 8)
-    MAX_JOY_VAL = math.pow(2, 15)
+    
+    MAX_TRIG_VAL = 2**8
+    MAX_JOY_VAL = 2**15
 
     def __init__(self):
 
@@ -107,12 +105,3 @@ class XboxController(object):
                     self.UpDPad = event.state
                 elif event.code == 'BTN_TRIGGER_HAPPY4':
                     self.DownDPad = event.state
-
-
-
-
-if __name__ == '__main__':
-    joy = XboxController()
-    while True:
-        time.sleep(0.1)
-        print(joy.read())
