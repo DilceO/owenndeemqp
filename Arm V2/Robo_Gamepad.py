@@ -61,6 +61,7 @@ class XboxController(object):
         if abs(temp_rIn) > TRIG_RIGHT_DEADZONE  : rIn = temp_rIn
         return theta, phi, rOut, rIn, gripperClose, gripperOpen, A
 
+#This code needs to be cited in our final report from the stack overflow article we found 
 
     def _monitor_controller(self):
         while True:
